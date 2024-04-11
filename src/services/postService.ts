@@ -24,7 +24,8 @@ export const usePostService = () => {
     title: string,
     userId: number,
     categoryId: number,
-    body: string
+    body: string,
+    imgId: number
   ): Promise<Post> => {
     return await prisma.post.create({
       data: {
@@ -32,6 +33,7 @@ export const usePostService = () => {
         userId,
         categoryId,
         body,
+        imgId
       },
     });
   };

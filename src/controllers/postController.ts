@@ -1,16 +1,26 @@
 import express from "express";
+import multer from 'multer';
 
 import { usePostService } from "../services/postService";
+import { useFileService } from "../services/fileService";
+
+import { Role } from "../const/roles";
 
 export const usePostController = () => {
+  const upload = multer({ dest: 'public/posts/' })
   const router = express.Router();
   const { getPosts, addCategory, getCategories, addPost } = usePostService();
+  const { saveInfo } = useFileService();
 
   router.get("/", async (req, res) => {
     res.json(await getPosts());
   });
 
   router.post("/add/category", async (req, res) => {
+    if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+      return res.sendStatus(403);
+    }
+    
     const name = req.body.name;
     const id = await addCategory(name);
     if (id) {
@@ -26,9 +36,16 @@ export const usePostController = () => {
     res.json(await getCategories());
   });
 
-  router.post("/add", async (req, res) => {
+  router.post("/add", upload.single('img'), async (req, res) => {
+
+    if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+      return res.sendStatus(403);
+    }
     const { title, userId, categoryId, body } = req.body;
-    const post = await addPost(title, userId, categoryId, body);
+
+    const imgId = await saveInfo(req.file.fieldname, req.file.originalname);
+
+    const post = await addPost(title, parseInt(userId), parseInt(categoryId), body, imgId);
     if (!post) {
       res.sendStatus(400);
       return;

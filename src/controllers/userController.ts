@@ -1,11 +1,14 @@
 import express from 'express';
 
 import { useUserService } from '../services/userService';
+import { useTokenService } from '../services/tokenService';
 
 export const useUserController = () => {
+
   const router = express.Router();
 
   const userService = useUserService();
+  const tokenService = useTokenService();
 
   router.post('/signup', async (req, res) => {
     const username = req.body.username;
@@ -15,10 +18,10 @@ export const useUserController = () => {
       res.status(401);
       return;
     }
-    res.json({
-      userId: await userService.regUser(username, password)
-    });
+    const userId = await userService.regUser(username, password);
+    res.json(await tokenService.generatePair(userId));
   });
+
   router.post('/signin', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -28,9 +31,15 @@ export const useUserController = () => {
       res.sendStatus(401);
       return;
     }
-    res.json({
-      userId
-    });
+    res.json(await tokenService.generatePair(userId));
+  });
+
+  router.post('/refresh', async (req, res) => {
+    const userId = await tokenService.removeTokens(req.body.refresh_token);
+    if (!userId) {
+      return res.sendStatus(403);
+    }
+    res.json(await tokenService.generatePair(userId));
   });
 
   return router;

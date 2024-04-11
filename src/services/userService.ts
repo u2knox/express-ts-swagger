@@ -25,6 +25,15 @@ export const useUserService = () => {
     return user;
   }
 
+  const getUserRoles = async (userId: number): Promise<number[]> => {
+    const roles = await prisma.userRoles.findMany({
+      where: {
+        userId
+      }
+    });
+    return roles.map(role => role.roleId);
+  }
+
   const checkUser = async (username: string, password: string): Promise<number | null> => {
     const hashPass = createHash('sha256').update(password).digest('hex');
     const user = await prisma.user.findFirst({
@@ -33,10 +42,9 @@ export const useUserService = () => {
         password: hashPass
       }
     })
-    console.log(user)
     if (!user) return null;
     return user.id;
   }
 
-  return { regUser, getUser, checkUser };
+  return { regUser, getUser, checkUser, getUserRoles };
 }

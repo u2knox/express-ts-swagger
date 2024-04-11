@@ -1,12 +1,14 @@
 import express, { Application } from "express";
-import router from './routes';
+import cors from "cors";
+import router from "./routes";
 
 const PORT = process.env.PORT || 8000;
 
 const app: Application = express();
 
+app.use(cors());
 app.use(express.static("public"));
-app.use(express.json())
+app.use(express.json());
 
 router(app);
 
