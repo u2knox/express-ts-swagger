@@ -15,7 +15,9 @@ export const useUserController = () => {
     const password = req.body.password;
 
     if (await userService.getUser(username)) {
-      res.status(401);
+      res.status(409).json({
+        message: 'Username already used'
+      });
       return;
     }
     const userId = await userService.regUser(username, password);
