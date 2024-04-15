@@ -4,7 +4,11 @@ import multer from 'multer';
 import { usePostService } from "../services/postService";
 import { useFileService } from "../services/fileService";
 
+import { dtoValidationMiddleware } from "../middlewares/dtoValidationMiddleware";
+
 import { Role } from "../const/roles";
+
+import { AddCategoryDTO, AddPostDTO } from "../models/dto/postDTO";
 
 export const usePostController = () => {
   const upload = multer({ dest: 'public/posts/' })
@@ -16,7 +20,7 @@ export const usePostController = () => {
     res.json(await getPosts());
   });
 
-  router.post("/add/category", async (req, res) => {
+  router.post("/add/category", dtoValidationMiddleware(AddCategoryDTO), async (req, res) => {
     if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
       return res.sendStatus(403);
     }
@@ -36,7 +40,7 @@ export const usePostController = () => {
     res.json(await getCategories());
   });
 
-  router.post("/add", upload.single('img'), async (req, res) => {
+  router.post("/add", upload.single('img'), dtoValidationMiddleware(AddPostDTO), async (req, res) => {
 
     if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
       return res.sendStatus(403);

@@ -3,6 +3,7 @@ import { plainToClass } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
 import { sanitize } from "class-sanitizer";
 import { ClassConstructor } from "class-transformer";
+import { unlink } from "fs";
 
 export const dtoValidationMiddleware = (
   type: ClassConstructor<Object>,
@@ -13,6 +14,10 @@ export const dtoValidationMiddleware = (
     validate(dtoObj, { skipMissingProperties }).then(
       (errors: ValidationError[]) => {
         if (errors.length > 0) {
+          if (req.file) {
+            unlink(req.file.destination + req.file.filename, () => {});
+          }
+
           res.status(400);
           res.json(errors[0].constraints);
         } else {
