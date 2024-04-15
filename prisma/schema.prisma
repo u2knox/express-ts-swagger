@@ -41,15 +41,16 @@ model PostCategory {
 }
 
 model Post {
-  id         Int          @id @default(autoincrement())
-  title      String
-  userId     Int
-  user       User         @relation(fields: [userId], references: [id])
-  categoryId Int
-  category   PostCategory @relation(fields: [categoryId], references: [id])
-  body       String
-  img        File?        @relation(fields: [imgId], references: [id])
-  imgId      Int?
+  id          Int          @id @default(autoincrement())
+  title       String
+  userId      Int
+  user        User         @relation(fields: [userId], references: [id])
+  categoryId  Int
+  category    PostCategory @relation(fields: [categoryId], references: [id])
+  body        String
+  img         File?        @relation(fields: [imgId], references: [id])
+  imgId       Int?
+  createdDate DateTime     @default(now())
 }
 
 model File {

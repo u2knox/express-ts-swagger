@@ -8,13 +8,21 @@ import { dtoValidationMiddleware } from "../middlewares/dtoValidationMiddleware"
 
 import { Role } from "../const/roles";
 
-import { AddCategoryDTO, AddPostDTO } from "../models/dto/postDTO";
+import { AddCategoryDTO, AddPostDTO, EditPostDTO } from "../models/dto/postDTO";
 import { unlink } from "fs";
 
 export const usePostController = () => {
   const upload = multer({ dest: "public/posts/" });
   const router = express.Router();
-  const { getPosts, addCategory, getCategories, addPost, removePost, removeCategory } = usePostService();
+  const {
+    getPosts,
+    addCategory,
+    getCategories,
+    addPost,
+    removePost,
+    removeCategory,
+    editPost,
+  } = usePostService();
   const { saveInfo } = useFileService();
 
   router.get("/", async (req, res) => {
@@ -80,7 +88,7 @@ export const usePostController = () => {
     }
   );
 
-  router.delete('/remove/:id', async (req, res) => {
+  router.delete("/remove/:id", async (req, res) => {
     if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
       return res.sendStatus(403);
     }
@@ -90,7 +98,7 @@ export const usePostController = () => {
     return res.sendStatus(404);
   });
 
-  router.delete('/category/remove/:id', async (req, res) => {
+  router.delete("/category/remove/:id", async (req, res) => {
     if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
       return res.sendStatus(403);
     }
@@ -98,6 +106,14 @@ export const usePostController = () => {
       return res.sendStatus(200);
     }
     return res.sendStatus(404);
+  });
+
+  router.post("/edit/:id", dtoValidationMiddleware(EditPostDTO), async (req, res) => {
+    if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+      return res.sendStatus(403);
+    }
+    const id = parseInt(req.params.id);
+    res.json(await editPost(id, req.body));
   });
 
   return router;

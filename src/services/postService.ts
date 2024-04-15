@@ -1,4 +1,4 @@
-import { Post, PostCategory } from "@prisma/client";
+import { Post, PostCategory, Prisma } from "@prisma/client";
 
 import { prisma } from "./prismaService";
 
@@ -43,6 +43,9 @@ export const usePostService = () => {
     body: string,
     imgId: number
   ): Promise<Post> => {
+    const isFound = await prisma.postCategory.findFirst({ where: { id: categoryId } });
+    if (!isFound) return null;
+  
     return await prisma.post.create({
       data: {
         title,
@@ -67,6 +70,16 @@ export const usePostService = () => {
     return !!res;
   };
 
+  const editPost = async (id: number, editedField: Prisma.PostUpdateInput) => {
+
+    await prisma.post.update({
+      where: {
+        id: id,
+      },
+      data: editedField,
+    });
+  };
+
   return {
     getPosts,
     addCategory,
@@ -74,5 +87,6 @@ export const usePostService = () => {
     addPost,
     removePost,
     removeCategory,
+    editPost,
   };
 };
