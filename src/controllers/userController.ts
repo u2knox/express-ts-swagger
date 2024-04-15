@@ -3,6 +3,10 @@ import express from 'express';
 import { useUserService } from '../services/userService';
 import { useTokenService } from '../services/tokenService';
 
+import { dtoValidationMiddleware } from '../middlewares/dtoValidationMiddleware';
+
+import { SignUpDTO, SignInDTO } from '../models/dto/userDTO';
+
 export const useUserController = () => {
 
   const router = express.Router();
@@ -10,7 +14,7 @@ export const useUserController = () => {
   const userService = useUserService();
   const tokenService = useTokenService();
 
-  router.post('/signup', async (req, res) => {
+  router.post('/signup', dtoValidationMiddleware(SignUpDTO), async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -22,9 +26,10 @@ export const useUserController = () => {
     }
     const userId = await userService.regUser(username, password);
     res.json(await tokenService.generatePair(userId));
+    res.sendStatus(201);
   });
 
-  router.post('/signin', async (req, res) => {
+  router.post('/signin', dtoValidationMiddleware(SignInDTO), async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -43,6 +48,14 @@ export const useUserController = () => {
     }
     res.json(await tokenService.generatePair(userId));
   });
+
+  router.post('/logout', async (req, res) => {
+    const userId = await tokenService.logOut(req.headers.authorization.split(' ')[1]);
+    if (!userId) {
+      return res.sendStatus(400);
+    }
+    res.sendStatus(202);
+  })
 
   return router;
 }

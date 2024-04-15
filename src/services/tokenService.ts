@@ -96,7 +96,6 @@ export const useTokenService = () => {
   ) => {
     try {
       const tokenData = await verifyAsync(token);
-      console.log(tokenData);
       if (tokenData.type !== type) {
         return false;
       }
@@ -139,5 +138,38 @@ export const useTokenService = () => {
     return tokenInfo.userId;
   };
 
-  return { generatePair, generateToken, verify, removeTokens };
+  const logOut = async (token: string) => {
+    const tokenInfo = await prisma.token.findFirst({
+      where: { 
+        token,
+        type: TokenType.ACCESS_TOKEN
+      },
+      include: {
+        parent: true,
+      }
+    });
+
+    if (!tokenInfo) {
+      return false;
+    }
+
+    await prisma.token.deleteMany({
+      where: {
+        parent: {
+          some: {
+            id: tokenInfo.parent[0].id,
+          },
+        },
+        userId: tokenInfo.userId,
+      },
+    });
+    await prisma.token.delete({
+      where: {
+        id: tokenInfo.parent[0].id,
+      },
+    });
+    return tokenInfo.userId;
+  }
+
+  return { generatePair, generateToken, verify, removeTokens, logOut };
 };
