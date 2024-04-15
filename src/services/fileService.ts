@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client"
 
-export const useFileService = () => {
-  const prisma = new PrismaClient();
+import { prisma } from "./prismaService";
 
+export const useFileService = () => {
   const saveInfo = async (name: string, originalname: string): Promise<number> => {
     const res = await prisma.file.create({
       data: {

@@ -19,7 +19,6 @@
     "typescript": "^5.4.4"
   },
   "dependencies": {
-    "-": "^0.0.1",
     "@prisma/client": "^5.12.1",
     "@types/multer": "^1.4.11",
     "class-sanitizer": "^1.0.1",

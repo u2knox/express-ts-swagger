@@ -20,13 +20,13 @@ export class SignInDTO {
 
   @IsString()
   @Trim()
-  @MinLength(5, { message: "username should be minimum of 5 characters" })
+  @MinLength(4, { message: "username should be minimum of 4 characters" })
   @MaxLength(50, { message: "username should be maximum of 50 characters" })
   public username: string;
 
   @IsString()
   @Trim()
-  @MinLength(5, { message: "username should be minimum of 5 characters" })
+  @MinLength(4, { message: "username should be minimum of 4 characters" })
   @MaxLength(50, { message: "username should be maximum of 50 characters" })
   public password: string;
 }

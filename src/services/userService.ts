@@ -1,9 +1,9 @@
 import { createHash } from "crypto";
-import { PrismaClient, User } from '@prisma/client';
+import { User } from '@prisma/client';
+
+import { prisma } from "./prismaService";
 
 export const useUserService = () => {
-  const prisma = new PrismaClient();
-
   const regUser = async (username: string, password: string): Promise<number | null> => {
     const hashPass = createHash('sha256').update(password).digest('hex');
     const user = await prisma.user.create({

@@ -15,10 +15,8 @@ export class AddPostDTO {
   @MaxLength(100, { message: 'Title is so large' })
   title: string;
   
-  @IsNumber()
   userId: number;
-  
-  @IsNumber()
+
   categoryId: number;
 
   @IsString()
@@ -27,6 +25,5 @@ export class AddPostDTO {
   @MaxLength(600, { message: 'Body is so large' })
   body: string;
 
-  @IsString()
   img: string;
 }

@@ -17,7 +17,7 @@ export const getUserMiddleware = async (
 
     if (userId) {
       const roles = await userService.getUserRoles(userId);
-
+      
       req.headers.userId = userId.toString();
       req.headers.roles = roles.map((role) => role.toString());
     } else {

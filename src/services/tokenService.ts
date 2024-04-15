@@ -1,16 +1,14 @@
 import jwt, { Secret } from "jsonwebtoken";
 
-import { PrismaClient } from "@prisma/client";
-
 import { TokenType } from "../const/token";
 
 import type { Token, TokenGenerateResult, TokenResult } from "../models/token";
 
+import { prisma } from "./prismaService";
+
 const SECRET: Secret = "mySeCreT";
 
 export const useTokenService = () => {
-  const prisma = new PrismaClient();
-
   const createToken = (
     userId: number,
     type: TokenType,
