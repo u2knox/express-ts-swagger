@@ -36,18 +36,6 @@ export const usePostController = () => {
     );
   });
 
-  router.get("/:id", async (req, res) => {
-    try {
-      const post = await getPost(parseInt(req.params.id));
-      res.json({
-        ...post,
-        imgUrl: getLinkToFile(post.imgId),
-      });
-    } catch {
-      res.sendStatus(404);
-    }
-  });
-
   router.post(
     "/add/category",
     dtoValidationMiddleware(AddCategoryDTO),
@@ -143,6 +131,18 @@ export const usePostController = () => {
       res.json(await editPost(id, req.body));
     }
   );
+
+  router.get("/:id", async (req, res) => {
+    try {
+      const post = await getPost(parseInt(req.params.id));
+      res.json({
+        ...post,
+        imgUrl: getLinkToFile(post.imgId),
+      });
+    } catch {
+      res.sendStatus(404);
+    }
+  });
 
   return router;
 };
