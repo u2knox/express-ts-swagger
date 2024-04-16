@@ -18,10 +18,10 @@ export const getUserMiddleware = async (
     if (userId) {
       const roles = await userService.getUserRoles(userId);
       
-      req.headers.userId = userId.toString();
-      req.headers.roles = roles.map((role) => role.toString());
+      res.locals.userId = userId.toString();
+      res.locals.roles = roles.map((role) => role.toString());
     } else {
-      req.headers.roles = [];
+      res.locals.roles = [];
     }
   }
 
@@ -38,7 +38,7 @@ export const isUserHaveRoles = (
     return res.sendStatus(403);
   }
 
-  const roles = req.headers.roles;
+  const roles = res.locals.roles;
 
   if (acceptRoles.length) {
     for (const role of roles) {

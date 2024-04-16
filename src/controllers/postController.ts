@@ -33,7 +33,7 @@ export const usePostController = () => {
     "/add/category",
     dtoValidationMiddleware(AddCategoryDTO),
     async (req, res) => {
-      if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+      if (!res.locals.roles?.includes(Role.ADMIN.toString())) {
         return res.sendStatus(403);
       }
 
@@ -58,7 +58,7 @@ export const usePostController = () => {
     upload.single("img"),
     dtoValidationMiddleware(AddPostDTO),
     async (req, res) => {
-      if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+      if (!res.locals.roles?.includes(Role.ADMIN.toString())) {
         if (req.file) {
           unlink(req.file.destination + req.file.filename, () => {});
         }
@@ -89,7 +89,7 @@ export const usePostController = () => {
   );
 
   router.delete("/remove/:id", async (req, res) => {
-    if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+    if (!res.locals.roles?.includes(Role.ADMIN.toString())) {
       return res.sendStatus(403);
     }
     if (await removePost(parseInt(req.params.id))) {
@@ -99,7 +99,7 @@ export const usePostController = () => {
   });
 
   router.delete("/category/remove/:id", async (req, res) => {
-    if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+    if (!res.locals.roles?.includes(Role.ADMIN.toString())) {
       return res.sendStatus(403);
     }
     if (await removeCategory(parseInt(req.params.id))) {
@@ -109,7 +109,7 @@ export const usePostController = () => {
   });
 
   router.post("/edit/:id", dtoValidationMiddleware(EditPostDTO), async (req, res) => {
-    if (!req.headers.roles?.includes(Role.ADMIN.toString())) {
+    if (!res.locals.roles?.includes(Role.ADMIN.toString())) {
       return res.sendStatus(403);
     }
     const id = parseInt(req.params.id);
