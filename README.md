@@ -6,9 +6,10 @@
 `git clone https://github.com/u2knox/express-ts-swagger.git`
 Если у Вас уже имеется проект, откройте его и напишите:
 
-1. git reset --hard
-2. git fetch
-3. git pull
+1. `rm prisma/dev.db`
+2. `git reset --hard`
+3. `git fetch`
+4. `git pull`
 
 ## 2 Этап
 
