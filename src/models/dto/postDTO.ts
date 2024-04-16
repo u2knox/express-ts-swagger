@@ -1,5 +1,5 @@
 import { Trim } from "class-sanitizer";
-import { IsNumber, IsString, MaxLength, MinLength } from "class-validator";
+import { IsString, MaxLength, MinLength } from "class-validator";
 
 export class AddCategoryDTO {
   @IsString()

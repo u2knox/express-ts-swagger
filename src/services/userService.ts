@@ -16,10 +16,19 @@ export const useUserService = () => {
     return user.id;
   }
 
-  const getUser = async (username: string): Promise<User | null> => {
+  const getUserByUsername = async (username: string): Promise<User | null> => {
     const user = await prisma.user.findFirst({
       where: {
         username,
+      }
+    })
+    return user;
+  }
+
+  const getUser = async (id: number): Promise<User | null> => {
+    const user = await prisma.user.findFirst({
+      where: {
+        id,
       }
     })
     return user;
@@ -46,5 +55,5 @@ export const useUserService = () => {
     return user.id;
   }
 
-  return { regUser, getUser, checkUser, getUserRoles };
+  return { regUser, getUserByUsername, checkUser, getUserRoles, getUser };
 }

@@ -1,5 +1,6 @@
 import { Trim } from "class-sanitizer";
-import { IsString, MaxLength, MinLength } from "class-validator";
+import { Exclude, Expose } from "class-transformer";
+import { IsNumber, IsString, MaxLength, MinLength } from "class-validator";
 
 export class SignUpDTO {
 
@@ -29,4 +30,15 @@ export class SignInDTO {
   @MinLength(4, { message: "username should be minimum of 4 characters" })
   @MaxLength(50, { message: "username should be maximum of 50 characters" })
   public password: string;
+}
+
+@Exclude()
+export class UserDTO {
+  @Expose()
+  @IsNumber()
+  public id: number;
+
+  @Expose()
+  @IsString()
+  public username: string;
 }

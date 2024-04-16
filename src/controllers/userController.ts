@@ -5,7 +5,8 @@ import { useTokenService } from "../services/tokenService";
 
 import { dtoValidationMiddleware } from "../middlewares/dtoValidationMiddleware";
 
-import { SignUpDTO, SignInDTO } from "../models/dto/userDTO";
+import { SignUpDTO, SignInDTO, UserDTO } from "../models/dto/userDTO";
+import { plainToClass } from "class-transformer";
 
 export const useUserController = () => {
   const router = express.Router();
@@ -20,7 +21,7 @@ export const useUserController = () => {
       const username = req.body.username;
       const password = req.body.password;
 
-      if (await userService.getUser(username)) {
+      if (await userService.getUserByUsername(username)) {
         res.status(409).json({
           message: "Username already used",
         });
@@ -64,6 +65,19 @@ export const useUserController = () => {
     }
     res.sendStatus(202);
   });
+
+  router.get('/:id', async (req, res) => {
+    try {
+      const user = await userService.getUser(parseInt(req.params.id));
+      if (user) {
+        res.json(plainToClass(UserDTO, user, { strategy: 'excludeAll'}));
+      } else {
+        res.sendStatus(404);
+      }
+    } catch {
+      res.sendStatus(404);
+    }
+  })
 
   return router;
 };
