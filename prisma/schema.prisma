@@ -55,7 +55,9 @@ model Post {
 
 model File {
   id           Int    @id @default(autoincrement())
-  name         String
+  filename     String
   originalname String
   Post         Post[]
+  mimetype     String
+  path         String
 }

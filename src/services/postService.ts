@@ -88,5 +88,6 @@ export const usePostService = () => {
     removePost,
     removeCategory,
     editPost,
+    getPost,
   };
 };

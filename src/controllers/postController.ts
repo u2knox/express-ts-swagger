@@ -15,6 +15,7 @@ export const usePostController = () => {
   const upload = multer({ dest: "public/posts/" });
   const router = express.Router();
   const {
+    getPost,
     getPosts,
     addCategory,
     getCategories,
@@ -23,10 +24,28 @@ export const usePostController = () => {
     removeCategory,
     editPost,
   } = usePostService();
-  const { saveInfo } = useFileService();
+  const { saveInfo, getLinkToFile } = useFileService();
 
   router.get("/", async (req, res) => {
-    res.json(await getPosts());
+    const posts = await getPosts();
+    res.json(
+      posts.map((post) => ({
+        ...post,
+        imgUrl: getLinkToFile(post.imgId),
+      }))
+    );
+  });
+
+  router.get("/:id", async (req, res) => {
+    try {
+      const post = await getPost(parseInt(req.params.id));
+      res.json({
+        ...post,
+        imgUrl: getLinkToFile(post.imgId),
+      });
+    } catch {
+      res.sendStatus(404);
+    }
   });
 
   router.post(
@@ -66,7 +85,12 @@ export const usePostController = () => {
       }
       const { title, userId, categoryId, body } = req.body;
 
-      const imgId = await saveInfo(req.file.fieldname, req.file.originalname);
+      const imgId = await saveInfo(
+        req.file.filename,
+        req.file.originalname,
+        req.file.mimetype,
+        req.file.path
+      );
 
       const post = await addPost(
         title,
@@ -108,13 +132,17 @@ export const usePostController = () => {
     return res.sendStatus(404);
   });
 
-  router.post("/edit/:id", dtoValidationMiddleware(EditPostDTO), async (req, res) => {
-    if (!res.locals.roles?.includes(Role.ADMIN.toString())) {
-      return res.sendStatus(403);
+  router.post(
+    "/edit/:id",
+    dtoValidationMiddleware(EditPostDTO),
+    async (req, res) => {
+      if (!res.locals.roles?.includes(Role.ADMIN.toString())) {
+        return res.sendStatus(403);
+      }
+      const id = parseInt(req.params.id);
+      res.json(await editPost(id, req.body));
     }
-    const id = parseInt(req.params.id);
-    res.json(await editPost(id, req.body));
-  });
+  );
 
   return router;
 };
